@@ -320,12 +320,17 @@ class Cli {
             'Turn right',
             'Turn left',
             'Reverse',
+            'Tow a vehicle',
+            'Do a wheelie',
             'Select or create another vehicle',
             'Exit',
           ],
         },
       ])
       .then((answers) => {
+        const selectedVehicle = this.vehicles.find(
+        (vehicle) => vehicle.vin === this.selectedVehicleVin
+      );
         // perform the selected action
         if (answers.action === 'Print details') {
           // find the selected vehicle and print its details
@@ -385,18 +390,32 @@ class Cli {
           }
         }
         // TODO: add statements to perform the tow action only if the selected vehicle is a truck. Call the findVehicleToTow method to find a vehicle to tow and pass the selected truck as an argument. After calling the findVehicleToTow method, you will need to return to avoid instantly calling the performActions method again since findVehicleToTow is asynchronous.
-        if(answers.vehicleType === Truck){
-          this.findVehicleToTow();
-          return;
+        else if (answers.action === 'Tow a vehicle') {
+          if (selectedVehicle instanceof Truck) {
+            this.findVehicleToTow();
+            return;
+          } else {
+            console.log("Only trucks can tow.");
+          }
         }
+
         // TODO: add statements to perform the wheelie action only if the selected vehicle is a motorbike
-        else if (answers.action === 'Select or create another vehicle') {
+        else if (answers.action === 'Do a wheelie') {
+        if (selectedVehicle instanceof Motorbike) {
+          console.log("You did a wheelie!");
+          return;
+        } else {
+          console.log("Only motorbikes can do a wheelie.");
+        }
+      } else if (answers.action === 'Select or create another vehicle') {
           // start the cli to return to the initial prompt if the user wants to select or create another vehicle
           this.startCli();
           return;
         } else {
           // exit the cli if the user selects exit
           this.exit = true;
+          console.log("Exiting...");
+          return;
         }
         if (!this.exit) {
           // if the user does not want to exit, perform actions on the selected vehicle
